@@ -23,11 +23,16 @@ With the few modifications this Code can be used for different versions of AVR A
               sudo avrdude -c usbasp -p m8 -U lfuse:w:0x9f:m -U hfuse:w:0xc9:m
 
 ### Burning the Firmware to the AVR Chip using avrdude 
+
+For Building the firmware first clone this git repo to your desktop, using 
+              git clone https://github.com/suryasundarraj/pam-password-vusb.git
+              cd pam-password-vsb
               cd firmware
               make hex
               sudo avrdude -c usbasp -p m8 -U flash:w:main.hex
 
-### Building the Commandline Tool to Read and Write to the EEPROM 
+### Building the Commandline Tool to Read and Write to the EEPROM
+              cd pam-password-vusb
               cd commanline
               make
 #### Commands to Read and Write data using Commandline tool
