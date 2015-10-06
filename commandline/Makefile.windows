@@ -1,0 +1,9 @@
+# You may use this file with
+#   make -f Makefile.windows
+# on Windows with MinGW instead of editing the main Makefile.
+
+include Makefile
+
+USBFLAGS=
+USBLIBS=    -lhid -lsetupapi
+EXE_SUFFIX= .exe
