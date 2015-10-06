@@ -2,7 +2,7 @@
 
 ### Building the Enviroinment for Virtual-USB (V-USB)
 
-With the Few Modifications the Code can be used for different versions of AVR Atmega Chips, This repo is run and tested with the Atmega8 8-Bit Microcontroller building the Low-USB Speed Device Data Storage
+With the few modifications this Code can be used for different versions of AVR Atmega Chips, This repo built and tested with the Atmega8 8-Bit Microcontroller building the Low-USB Speed Device Data Storage
 
 #### Install the AVR GCC Toolchain Components using Package Manager 
 
