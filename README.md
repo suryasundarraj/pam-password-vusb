@@ -24,7 +24,8 @@ With the few modifications this Code can be used for different versions of AVR A
 
 ### Burning the Firmware to the AVR Chip using avrdude 
 
-For Building the firmware first clone this git repo to your desktop, using 
+For Building the firmware first clone this git repo to your desktop using ,
+
               git clone https://github.com/suryasundarraj/pam-password-vusb.git
               cd pam-password-vsb
               cd firmware
