@@ -33,13 +33,23 @@ For Building the firmware first clone this git repo to your desktop using ,
               sudo avrdude -c usbasp -p m8 -U flash:w:main.hex
 
 ### Building the Commandline Tool to Read and Write to the EEPROM
+
+Before building the commandline tool, make sure that you have following libraries which can be installed using your package manager on LINUX based Computer, This library will contain the usb.h header files.
+
+- libusb-dev
+- libusb-1.0.9
+
+Once the libraries are installed start building the makefile using the following commands in your terminal,
+
               cd pam-password-vusb
               cd commanline
               make
+              
 #### Commands to Read and Write data using Commandline tool
 
               sudo ./pamtool read 
                     : retrives the data stored in the EEPROM
+                    
               sudo ./pamtool write 0x52 0x61 0x64
                     : writes the data to the EEPROM which can be retrived later 
   
