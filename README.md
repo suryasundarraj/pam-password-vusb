@@ -50,7 +50,7 @@ Once the libraries are installed start building the makefile using the following
               sudo ./pamtool read 
                     : retrives the data stored in the EEPROM
                     
-              sudo ./pamtool write 0x52 0x61 0x64
+              sudo ./pamtool write password
                     : writes the data to the EEPROM which can be retrived later 
   
 
