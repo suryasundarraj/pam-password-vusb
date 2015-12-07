@@ -34,26 +34,26 @@ PROGMEM const char usbHidReportDescriptor[22] = {    /* USB report descriptor */
    opaque data bytes and the following variables store the status of the 
    current data transfer */
 
-static uchar    currentAddress;
-static uchar    bytesRemaining;
+static uchar    g_currentAddress;
+static uchar    g_bytesRemaining;
 
 /**************************************************************************************
 Function Name 		:	usbFunctionRead()
 Description			:	This function is called when the host sends a chunk of data 
 						to the device.
 Parameters 			:	data,len
-			data    :	data to be written to the usb
-			len 	:	length of data
+			p_data  :	data to be written to the usb
+			p_len 	:	length of data
 Return 				:	uchar - when uart connection fails returns -1 else 0
 **************************************************************************************/
-uchar   usbFunctionRead(uchar *data, uchar len)
+uchar   usbFunctionRead(uchar *p_data, uchar p_len)
 {
-    if(len > bytesRemaining)
-        len = bytesRemaining;
-    eeprom_read_block(data, (uchar *)0 + currentAddress, len);
-    currentAddress += len;
-    bytesRemaining -= len;
-    return len;
+    if(p_len > g_bytesRemaining)
+        p_len = g_bytesRemaining;
+    eeprom_read_block(p_data, (uchar *)0 + g_currentAddress, p_len);
+    g_currentAddress += p_len;
+    g_bytesRemaining -= p_len;
+    return p_len;
 }
 
 /**************************************************************************************
@@ -61,28 +61,27 @@ Function Name 		:	usbFunctionWrite()
 Description			:	This function is called when the host sends a chunk of data 
 						to the device.
 Parameters 			:	data,len
-			data    :	data to be written to the usb
-			len 	:	length of data
+			p_data  :	data to be written to the usb
+			p_len 	:	length of data
 Return 				:	uchar - when uart connection fails returns -1 else 0
 **************************************************************************************/
-uchar   usbFunctionWrite(uchar *data, uchar len)
+uchar   usbFunctionWrite(uchar *p_data, uchar p_len)
 {
-    if(bytesRemaining == 0)
+    if(g_bytesRemaining == 0)
         return 1;               /* end of transfer */
-    if(len > bytesRemaining)
-        len = bytesRemaining;
-    eeprom_write_block(data, (uchar *)0 + currentAddress, len);
-    currentAddress += len;
-    bytesRemaining -= len;
-    return bytesRemaining == 0; /* return 1 if this was the last chunk */
+    if(p_len > g_bytesRemaining)
+        p_len = g_bytesRemaining;
+    eeprom_write_block(p_data, (uchar *)0 + g_currentAddress, p_len);
+    g_currentAddress += p_len;
+    g_bytesRemaining -= p_len;
+    return g_bytesRemaining == 0; /* return 1 if this was the last chunk */
 }
 
 /**************************************************************************************
-Function Name 		:	uartInit
-Description			:	Initialize the UART Serial Communication between the 
-						Raspberry Pi and the Atmega 8a Microcontroller
-Parameters 			:	void
-Return 				:	int - when uart connection fails returns -1 else 0
+Function Name 		:	usbFunctionSetup
+Description			:	Setup the USB Communication
+Parameters 			:	data
+Return 				:	error 
 **************************************************************************************/
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {
@@ -90,13 +89,13 @@ usbRequest_t    *rq = (void *)data;
     if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS){    /* HID class request */
         if(rq->bRequest == USBRQ_HID_GET_REPORT){  /* wValue: ReportType (highbyte), ReportID (lowbyte) */
             /* since we have only one report type, we can ignore the report-ID */
-            bytesRemaining = 128;
-            currentAddress = 0;
+            g_bytesRemaining = 128;
+            g_currentAddress = 0;
             return USB_NO_MSG;  /* use usbFunctionRead() to obtain data */
         }else if(rq->bRequest == USBRQ_HID_SET_REPORT){
             /* since we have only one report type, we can ignore the report-ID */
-            bytesRemaining = 128;
-            currentAddress = 0;
+            g_bytesRemaining = 128;
+            g_currentAddress = 0;
             return USB_NO_MSG;  /* use usbFunctionWrite() to receive data from host */
         }
     }else{
@@ -109,7 +108,7 @@ usbRequest_t    *rq = (void *)data;
 Function Name 		:	main
 Description			:	Initialize the USB and start the interrupt
 Parameters 			:	void
-Return 				:	int 
+Return 				:	NULL
 **************************************************************************************/
 int main(void)
 {
@@ -140,3 +139,4 @@ int main(void)
 }
 
 //End of the Program
+//********************************************************************************************//

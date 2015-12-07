@@ -10,8 +10,6 @@ using the PAMTOOL Command Line Tool
 #include "pampwd.h"
 #include "usbconfig.h"  /* for device VID, PID, vendor name and product name */
 
-/* ------------------------------------------------------------------------- */
-
 static char *usbErrorMessage(int errCode)
 {
 static char buffer[80];
@@ -43,8 +41,6 @@ int             err;
     return dev;
 }
 
-/* ------------------------------------------------------------------------- */
-
 static void hexdump(char *buffer, int len)
 {
 int     i;
@@ -64,20 +60,6 @@ FILE    *fp = stdout;
         fprintf(fp, "\n");
 }
 
-static int  hexread(char *buffer, char *string, int buflen)
-{
-char    *s;
-int     pos = 0;
-
-    while((s = strtok(string, ", ")) != NULL && pos < buflen){
-        string = NULL;
-        buffer[pos++] = (char)strtol(s, NULL, 0);
-    }
-    return pos;
-}
-
-/* ------------------------------------------------------------------------- */
-
 static void usage(char *myName)
 {
     fprintf(stderr, "usage:\n");
@@ -85,6 +67,12 @@ static void usage(char *myName)
     fprintf(stderr, "  %s write <listofbytes>\n", myName);
 }
 
+/**************************************************************************************
+Function Name       :   main
+Description         :   Read and Write the Password in the EEPROM
+Parameters          :   commandline arguments
+Return              :   NULL
+**************************************************************************************/
 int main(int argc, char **argv)
 {
 usbDevice_t *dev;
@@ -105,10 +93,11 @@ int         err;
             hexdump(buffer + 1, sizeof(buffer) - 1);
         }
     }else if(strcasecmp(argv[1], "write") == 0){
-        int i, pos;
         memset(buffer, 0, sizeof(buffer));
-        for(pos = 1, i = 2; i < argc && pos < sizeof(buffer); i++){
-            pos += hexread(buffer + pos, argv[i], sizeof(buffer) - pos);
+        int i = 1;
+        while(*argv[2] != '\0'){    
+            buffer[i] += *argv[2]++;
+            i++;
         }
         if((err = usbhidSetReport(dev, buffer, sizeof(buffer))) != 0)   /* add a dummy report ID */
             fprintf(stderr, "error writing data: %s\n", usbErrorMessage(err));
@@ -120,4 +109,4 @@ int         err;
     return 0;
 }
 
-/* ------------------------------------------------------------------------- */
+//****************************************************************************************************//
